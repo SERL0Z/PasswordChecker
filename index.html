@@ -4,10 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PassGuard – Comprobador de Seguridad</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;600;800&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;600;800&display=swap" rel="stylesheet"/>
 
   <style>
     :root {
@@ -17,7 +14,7 @@
       --text:        #c8d8f0;
       --text-dim:    #4a6080;
       --accent:      #00e5ff;
-      --accent-glow: rgba(0, 229, 255, 0.18);
+      --accent-glow: rgba(0,229,255,0.18);
       --weak:        #ff3860;
       --fair:        #ffb830;
       --good:        #00e5a0;
@@ -49,8 +46,7 @@
     /* ── Botón de idioma ── */
     #lang-toggle {
       position: fixed;
-      top: 18px;
-      right: 18px;
+      top: 18px; right: 18px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px;
@@ -63,10 +59,7 @@
       transition: background 0.2s, box-shadow 0.2s;
       z-index: 100;
     }
-    #lang-toggle:hover {
-      background: var(--accent-glow);
-      box-shadow: 0 0 10px var(--accent-glow);
-    }
+    #lang-toggle:hover { background: var(--accent-glow); box-shadow: 0 0 10px var(--accent-glow); }
 
     header { text-align: center; margin-bottom: 40px; }
 
@@ -95,13 +88,7 @@
       background-clip: text;
     }
 
-    .subtitle {
-      margin-top: 10px;
-      font-size: 14px;
-      color: var(--text-dim);
-      font-weight: 300;
-      letter-spacing: 1px;
-    }
+    .subtitle { margin-top: 10px; font-size: 14px; color: var(--text-dim); font-weight: 300; letter-spacing: 1px; }
 
     .card {
       width: 100%;
@@ -114,7 +101,6 @@
       position: relative;
       overflow: hidden;
     }
-
     .card::before {
       content: '';
       position: absolute;
@@ -133,7 +119,7 @@
       font-family: var(--font-mono);
     }
 
-    .input-wrapper { position: relative; margin-bottom: 24px; }
+    .input-wrapper { position: relative; margin-bottom: 12px; }
 
     #password-input {
       width: 100%;
@@ -148,33 +134,43 @@
       transition: border-color 0.2s, box-shadow 0.2s;
       letter-spacing: 2px;
     }
-    #password-input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
+    #password-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
 
     #toggle-visibility {
       position: absolute;
-      right: 14px;
-      top: 50%;
+      right: 14px; top: 50%;
       transform: translateY(-50%);
-      background: none;
-      border: none;
+      background: none; border: none;
       cursor: pointer;
       color: var(--text-dim);
       transition: color 0.2s;
-      padding: 4px;
-      font-size: 18px;
-      line-height: 1;
+      padding: 4px; font-size: 18px; line-height: 1;
     }
     #toggle-visibility:hover { color: var(--accent); }
 
-    .strength-header {
+    /* ── Botón generador de contraseña ── */
+    #generate-btn {
+      width: 100%;
+      background: rgba(123,95,255,0.1);
+      border: 1px solid rgba(123,95,255,0.4);
+      border-radius: var(--radius);
+      padding: 10px 18px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--max);
+      cursor: pointer;
+      letter-spacing: 1px;
+      transition: background 0.2s, box-shadow 0.2s;
+      margin-bottom: 24px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      justify-content: center;
+      gap: 8px;
     }
+    #generate-btn:hover { background: rgba(123,95,255,0.2); box-shadow: 0 0 12px rgba(123,95,255,0.25); }
+    #generate-btn:active { transform: scale(0.98); }
+
+    .strength-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
 
     #strength-label {
       font-size: 13px;
@@ -187,14 +183,12 @@
 
     #crack-time { font-size: 11px; color: var(--text-dim); font-family: var(--font-mono); }
 
-    .progress-bar { display: flex; gap: 5px; margin-bottom: 28px; }
+    .progress-bar { display: flex; gap: 5px; margin-bottom: 20px; }
 
     .bar-segment {
-      flex: 1;
-      height: 6px;
-      border-radius: 3px;
+      flex: 1; height: 6px; border-radius: 3px;
       background: rgba(255,255,255,0.06);
-      transition: background 0.4s ease, box-shadow 0.4s ease;
+      transition: background 0.4s, box-shadow 0.4s;
     }
     .bar-segment.active-1 { background: var(--weak);   box-shadow: 0 0 8px var(--weak); }
     .bar-segment.active-2 { background: var(--fair);   box-shadow: 0 0 8px var(--fair); }
@@ -202,6 +196,7 @@
     .bar-segment.active-4 { background: var(--strong); box-shadow: 0 0 8px var(--strong); }
     .bar-segment.active-5 { background: var(--max);    box-shadow: 0 0 8px var(--max); }
 
+    /* ── Aviso lista negra ── */
     #blacklist-warning {
       display: none;
       align-items: center;
@@ -210,12 +205,38 @@
       border: 1px solid rgba(255,56,96,0.4);
       border-radius: var(--radius);
       padding: 10px 14px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       font-size: 13px;
       color: var(--weak);
       font-family: var(--font-mono);
     }
-    #blacklist-warning span.icon { font-size: 18px; }
+
+    /* ── Aviso HaveIBeenPwned ── */
+    #hibp-warning {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      font-family: var(--font-mono);
+    }
+    #hibp-warning.pwned {
+      background: rgba(255,56,96,0.1);
+      border: 1px solid rgba(255,56,96,0.4);
+      color: var(--weak);
+    }
+    #hibp-warning.safe {
+      background: rgba(0,229,160,0.08);
+      border: 1px solid rgba(0,229,160,0.3);
+      color: var(--good);
+    }
+    #hibp-warning.checking {
+      background: rgba(0,229,255,0.06);
+      border: 1px solid rgba(0,229,255,0.2);
+      color: var(--accent);
+    }
 
     .section-title {
       font-size: 10px;
@@ -226,77 +247,37 @@
       font-family: var(--font-mono);
     }
 
-    .checklist {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 28px;
-    }
+    .checklist { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 28px; }
 
     .check-item {
-      display: flex;
-      align-items: center;
-      gap: 9px;
+      display: flex; align-items: center; gap: 9px;
       font-size: 13px;
       font-family: var(--font-mono);
       color: var(--text-dim);
       transition: color 0.3s;
     }
-
     .check-icon {
-      width: 20px;
-      height: 20px;
+      width: 20px; height: 20px;
       border-radius: 50%;
       border: 1.5px solid var(--text-dim);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 11px;
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; flex-shrink: 0;
       transition: all 0.3s;
     }
-
-    .check-item.ok .check-icon {
-      border-color: var(--good);
-      background: rgba(0,229,160,0.15);
-      color: var(--good);
-    }
+    .check-item.ok .check-icon { border-color: var(--good); background: rgba(0,229,160,0.15); color: var(--good); }
     .check-item.ok { color: #c8d8f0; }
 
     .entropy-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
       background: rgba(0,0,0,0.25);
       border: 1px solid var(--border);
       border-radius: var(--radius);
       padding: 12px 18px;
     }
+    .entropy-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); font-family: var(--font-mono); }
+    #entropy-value { font-size: 20px; font-weight: 600; font-family: var(--font-mono); color: var(--accent); transition: color 0.3s; }
 
-    .entropy-label {
-      font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--text-dim);
-      font-family: var(--font-mono);
-    }
-
-    #entropy-value {
-      font-size: 20px;
-      font-weight: 600;
-      font-family: var(--font-mono);
-      color: var(--accent);
-      transition: color 0.3s;
-    }
-
-    footer {
-      margin-top: 32px;
-      font-size: 11px;
-      color: var(--text-dim);
-      text-align: center;
-      letter-spacing: 1px;
-      font-family: var(--font-mono);
-    }
+    footer { margin-top: 32px; font-size: 11px; color: var(--text-dim); text-align: center; letter-spacing: 1px; font-family: var(--font-mono); }
 
     @media (max-width: 420px) {
       .card { padding: 28px 20px; }
@@ -311,16 +292,18 @@
     header { animation: fadeUp 0.5s ease both; }
     .card  { animation: fadeUp 0.5s 0.1s ease both; }
     footer { animation: fadeUp 0.5s 0.2s ease both; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinning { display: inline-block; animation: spin 1s linear infinite; }
   </style>
 </head>
 
 <body>
 
-  <!-- Botón de idioma (esquina superior derecha) -->
   <button id="lang-toggle">🌐 EN</button>
 
   <header>
-    <div class="logo-badge">🔐 PassGuard v1.0</div>
+    <div class="logo-badge">🔐 PassGuard v2.0</div>
     <h1>Password Analyzer</h1>
     <p class="subtitle" id="subtitle-text">Comprobador de seguridad en tiempo real</p>
   </header>
@@ -329,31 +312,36 @@
 
     <p class="field-label" id="label-input">// introduce tu contraseña</p>
     <div class="input-wrapper">
-      <input
-        type="password"
-        id="password-input"
-        autocomplete="new-password"
-        spellcheck="false"
-      />
+      <input type="password" id="password-input" autocomplete="new-password" spellcheck="false"/>
       <button id="toggle-visibility" aria-label="Mostrar/ocultar contraseña">👁️</button>
     </div>
+
+    <!-- Botón generador -->
+    <button id="generate-btn">🎲 <span id="generate-label">Generar contraseña segura</span></button>
 
     <div class="strength-header">
       <span id="strength-label">— sin analizar —</span>
       <span id="crack-time"></span>
     </div>
 
-    <div class="progress-bar" id="progress-bar">
-      <div class="bar-segment" data-index="1"></div>
-      <div class="bar-segment" data-index="2"></div>
-      <div class="bar-segment" data-index="3"></div>
-      <div class="bar-segment" data-index="4"></div>
-      <div class="bar-segment" data-index="5"></div>
+    <div class="progress-bar">
+      <div class="bar-segment"></div>
+      <div class="bar-segment"></div>
+      <div class="bar-segment"></div>
+      <div class="bar-segment"></div>
+      <div class="bar-segment"></div>
     </div>
 
+    <!-- Aviso lista negra -->
     <div id="blacklist-warning">
-      <span class="icon">⚠️</span>
+      <span>⚠️</span>
       <span id="blacklist-text">Contraseña muy común. Es la primera que probaría un atacante.</span>
+    </div>
+
+    <!-- Aviso HaveIBeenPwned -->
+    <div id="hibp-warning">
+      <span id="hibp-icon">🔍</span>
+      <span id="hibp-text"></span>
     </div>
 
     <p class="section-title" id="label-reqs">// requisitos de seguridad</p>
@@ -397,84 +385,93 @@
 
   <script>
     /* ============================================================
-       TRADUCCIONES
-       Objeto con todos los textos en español e inglés.
-       Al cambiar de idioma, simplemente leemos del objeto correcto.
+       TRADUCCIONES (i18n)
     ============================================================ */
     const I18N = {
       es: {
-        pageTitle:      'PassGuard – Comprobador de Seguridad',
-        badge:          '🔐 PassGuard v1.0',
-        subtitle:       'Comprobador de seguridad en tiempo real',
-        labelInput:     '// introduce tu contraseña',
-        placeholder:    'escribe aquí...',
-        labelReqs:      '// requisitos de seguridad',
-        labelEntropy:   'Entropía estimada',
-        footerText:     'tu contraseña nunca sale de este navegador',
-        blacklist:      'Contraseña muy común. Es la primera que probaría un atacante.',
-        noAnalysis:     '— sin analizar —',
-        crackPrefix:    '⚡ Crackear: ',
-        levels: ['— sin analizar —','💀 Muy débil','⚠️  Débil','🟡 Media','✅ Fuerte','🔒 Muy fuerte'],
-        levelBlacklist: '💀 Muy débil (contraseña conocida)',
+        pageTitle:    'PassGuard – Comprobador de Seguridad',
+        badge:        '🔐 PassGuard v2.0',
+        subtitle:     'Comprobador de seguridad en tiempo real',
+        labelInput:   '// introduce tu contraseña',
+        placeholder:  'escribe aquí...',
+        generateBtn:  'Generar contraseña segura',
+        labelReqs:    '// requisitos de seguridad',
+        labelEntropy: 'Entropía estimada',
+        footerText:   'tu contraseña nunca sale de este navegador',
+        blacklist:    'Contraseña muy común. Es la primera que probaría un atacante.',
+        noAnalysis:   '— sin analizar —',
+        crackPrefix:  '⚡ Crackear: ',
+        levels:       ['— sin analizar —','💀 Muy débil','⚠️ Débil','🟡 Media','✅ Fuerte','🔒 Muy fuerte'],
+        levelBL:      '💀 Muy débil (contraseña conocida)',
+        hibpChecking: 'Comprobando filtraciones de datos...',
+        hibpPwned:    (n) => `⚠️ ¡Filtrada! Aparece ${n.toLocaleString()} veces en brechas de datos.`,
+        hibpSafe:     '✅ No encontrada en filtraciones conocidas.',
+        hibpError:    'No se pudo comprobar HaveIBeenPwned.',
+        langBtn:      '🌐 EN',
         times: {
-          instant: '< 1 segundo',
-          seconds: s  => `${s} segundos`,
-          minutes: m  => `${m} minutos`,
-          hours:   h  => `${h} horas`,
-          days:    d  => `${d} días`,
-          years:   y  => `${y} años`,
-          centuries: c => `${c} siglos`,
-          forever: 'millones de años ♾️',
+          instant:  '< 1 segundo',
+          seconds:  s => `${s} segundos`,
+          minutes:  m => `${m} minutos`,
+          hours:    h => `${h} horas`,
+          days:     d => `${d} días`,
+          years:    y => `${y} años`,
+          centuries:c => `${c} siglos`,
+          forever:  'millones de años ♾️',
         },
-        langBtn: '🌐 EN',
       },
       en: {
-        pageTitle:      'PassGuard – Password Security Checker',
-        badge:          '🔐 PassGuard v1.0',
-        subtitle:       'Real-time password security analyzer',
-        labelInput:     '// enter your password',
-        placeholder:    'type here...',
-        labelReqs:      '// security requirements',
-        labelEntropy:   'Estimated entropy',
-        footerText:     'your password never leaves this browser',
-        blacklist:      'Very common password. It\'s the first one an attacker would try.',
-        noAnalysis:     '— not analyzed —',
-        crackPrefix:    '⚡ Crack time: ',
-        levels: ['— not analyzed —','💀 Very weak','⚠️  Weak','🟡 Medium','✅ Strong','🔒 Very strong'],
-        levelBlacklist: '💀 Very weak (known password)',
+        pageTitle:    'PassGuard – Password Security Checker',
+        badge:        '🔐 PassGuard v2.0',
+        subtitle:     'Real-time password security analyzer',
+        labelInput:   '// enter your password',
+        placeholder:  'type here...',
+        generateBtn:  'Generate secure password',
+        labelReqs:    '// security requirements',
+        labelEntropy: 'Estimated entropy',
+        footerText:   'your password never leaves this browser',
+        blacklist:    "Very common password. It's the first one an attacker would try.",
+        noAnalysis:   '— not analyzed —',
+        crackPrefix:  '⚡ Crack time: ',
+        levels:       ['— not analyzed —','💀 Very weak','⚠️ Weak','🟡 Medium','✅ Strong','🔒 Very strong'],
+        levelBL:      '💀 Very weak (known password)',
+        hibpChecking: 'Checking data breach databases...',
+        hibpPwned:    (n) => `⚠️ Leaked! Found ${n.toLocaleString()} times in data breaches.`,
+        hibpSafe:     '✅ Not found in known data breaches.',
+        hibpError:    'Could not reach HaveIBeenPwned.',
+        langBtn:      '🌐 ES',
         times: {
-          instant: '< 1 second',
-          seconds: s  => `${s} seconds`,
-          minutes: m  => `${m} minutes`,
-          hours:   h  => `${h} hours`,
-          days:    d  => `${d} days`,
-          years:   y  => `${y} years`,
-          centuries: c => `${c} centuries`,
-          forever: 'millions of years ♾️',
+          instant:  '< 1 second',
+          seconds:  s => `${s} seconds`,
+          minutes:  m => `${m} minutes`,
+          hours:    h => `${h} hours`,
+          days:     d => `${d} days`,
+          years:    y => `${y} years`,
+          centuries:c => `${c} centuries`,
+          forever:  'millions of years ♾️',
         },
-        langBtn: '🌐 ES',
       }
     };
 
     /* ============================================================
-       ESTADO DEL IDIOMA ACTUAL
+       ESTADO
     ============================================================ */
-    let lang = 'es'; // idioma por defecto: español
+    let lang = 'es';
+    let hibpTimer = null; // temporizador para no llamar a la API en cada tecla
 
     /* ============================================================
-       LISTA NEGRA DE CONTRASEÑAS COMUNES
+       LISTA NEGRA LOCAL
     ============================================================ */
     const BLACKLIST = [
-      "123456","password","123456789","12345678","12345",
-      "1234567","1234567890","qwerty","abc123","111111",
-      "123123","admin","letmein","welcome","monkey",
-      "dragon","master","sunshine","princess","superman",
-      "trustno1","iloveyou","passw0rd","password1","qwerty123",
-      "contraseña","1234","00000000","11111111","password123"
+      "123456","password","123456789","12345678","12345","1234567",
+      "1234567890","qwerty","abc123","111111","123123","admin",
+      "letmein","welcome","monkey","dragon","master","sunshine",
+      "princess","superman","trustno1","iloveyou","passw0rd",
+      "password1","qwerty123","contraseña","1234","00000000",
+      "11111111","password123"
     ];
 
     /* ============================================================
-       REFERENCIAS AL DOM
+       REFERENCIAS DOM
     ============================================================ */
     const inputEl       = document.getElementById('password-input');
     const toggleBtn     = document.getElementById('toggle-visibility');
@@ -485,6 +482,11 @@
     const blacklistText = document.getElementById('blacklist-text');
     const entropyEl     = document.getElementById('entropy-value');
     const langBtn       = document.getElementById('lang-toggle');
+    const generateBtn   = document.getElementById('generate-btn');
+    const generateLabel = document.getElementById('generate-label');
+    const hibpWarn      = document.getElementById('hibp-warning');
+    const hibpText      = document.getElementById('hibp-text');
+    const hibpIcon      = document.getElementById('hibp-icon');
 
     const REQS = {
       length:   document.getElementById('req-length'),
@@ -496,35 +498,145 @@
     };
 
     /* ============================================================
-       FUNCIÓN: aplicarIdioma
-       Actualiza todos los textos visibles según el idioma activo.
-       Usa los atributos data-es / data-en en los spans del checklist.
+       HAVEIBEENPWNED — k-Anonymity
+       Técnica de privacidad: solo se envían los primeros 5 caracteres
+       del hash SHA-1 de la contraseña. La API devuelve todos los
+       hashes que empiezan igual y comparamos localmente.
+       Así la contraseña real NUNCA sale del navegador.
+    ============================================================ */
+    async function sha1(text) {
+      // SubtleCrypto: API nativa del navegador para criptografía
+      const encoder = new TextEncoder();
+      const data = encoder.encode(text);
+      const hashBuffer = await crypto.subtle.digest('SHA-1', data);
+      // Convertir ArrayBuffer a string hexadecimal
+      return Array.from(new Uint8Array(hashBuffer))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('')
+        .toUpperCase();
+    }
+
+    async function comprobarHIBP(pwd) {
+      if (pwd.length < 4) {
+        hibpWarn.style.display = 'none';
+        return;
+      }
+      const t = I18N[lang];
+
+      // Mostrar estado "comprobando..."
+      hibpWarn.className = 'checking';
+      hibpIcon.textContent = '⏳';
+      hibpText.textContent = t.hibpChecking;
+      hibpWarn.style.display = 'flex';
+
+      try {
+        const hash   = await sha1(pwd);
+        const prefix = hash.slice(0, 5);   // primeros 5 caracteres
+        const suffix = hash.slice(5);      // el resto (para comparar localmente)
+
+        // Llamada a la API con solo el prefijo (privacidad garantizada)
+        const response = await fetch(`https://api.pwnedpasswords.com/range/${prefix}`);
+        if (!response.ok) throw new Error('API error');
+
+        const text = await response.text();
+        // La API devuelve líneas con formato: SUFIJOHASH:CANTIDAD
+        const lines = text.split('\n');
+        let count = 0;
+        for (const line of lines) {
+          const [hashSuffix, cantidad] = line.trim().split(':');
+          if (hashSuffix === suffix) {
+            count = parseInt(cantidad, 10);
+            break;
+          }
+        }
+
+        if (count > 0) {
+          hibpWarn.className = 'pwned';
+          hibpIcon.textContent = '🚨';
+          hibpText.textContent = t.hibpPwned(count);
+        } else {
+          hibpWarn.className = 'safe';
+          hibpIcon.textContent = '✅';
+          hibpText.textContent = t.hibpSafe;
+        }
+        hibpWarn.style.display = 'flex';
+
+      } catch (err) {
+        hibpWarn.className = '';
+        hibpWarn.style.display = 'none';
+        // Error silencioso: si la API falla, simplemente no se muestra
+      }
+    }
+
+    /* ============================================================
+       GENERADOR DE CONTRASEÑA SEGURA
+       Usa crypto.getRandomValues() — generador criptográficamente
+       seguro del navegador, mucho mejor que Math.random().
+    ============================================================ */
+    function generarPassword() {
+      const mayus   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const minus   = 'abcdefghijklmnopqrstuvwxyz';
+      const nums    = '0123456789';
+      const simbolos= '!@#$%^&*()_+-=[]{}|;:,.<>?';
+      const todos   = mayus + minus + nums + simbolos;
+
+      // Garantizamos al menos 1 de cada tipo
+      let pwd = [
+        mayus[randomInt(mayus.length)],
+        minus[randomInt(minus.length)],
+        nums[randomInt(nums.length)],
+        simbolos[randomInt(simbolos.length)],
+      ];
+
+      // Rellenamos hasta 16 caracteres con caracteres aleatorios
+      for (let i = pwd.length; i < 16; i++) {
+        pwd.push(todos[randomInt(todos.length)]);
+      }
+
+      // Mezclar el array (Fisher-Yates shuffle) para que los caracteres
+      // obligatorios no estén siempre al principio
+      for (let i = pwd.length - 1; i > 0; i--) {
+        const j = randomInt(i + 1);
+        [pwd[i], pwd[j]] = [pwd[j], pwd[i]];
+      }
+
+      return pwd.join('');
+    }
+
+    // Número entero aleatorio criptográficamente seguro en [0, max)
+    function randomInt(max) {
+      const arr = new Uint32Array(1);
+      crypto.getRandomValues(arr);
+      return arr[0] % max;
+    }
+
+    /* ============================================================
+       APLICAR IDIOMA
     ============================================================ */
     function aplicarIdioma() {
       const t = I18N[lang];
-      document.documentElement.lang        = lang;
-      document.title                        = t.pageTitle;
-      document.querySelector('.logo-badge').textContent         = t.badge;
-      document.getElementById('subtitle-text').textContent      = t.subtitle;
-      document.getElementById('label-input').textContent        = t.labelInput;
-      document.getElementById('label-reqs').textContent         = t.labelReqs;
-      document.getElementById('label-entropy').textContent      = t.labelEntropy;
-      document.getElementById('footer-text').textContent        = t.footerText;
-      inputEl.placeholder                   = t.placeholder;
-      langBtn.textContent                   = t.langBtn;
-      blacklistText.textContent             = t.blacklist;
+      document.documentElement.lang = lang;
+      document.title = t.pageTitle;
+      document.querySelector('.logo-badge').textContent              = t.badge;
+      document.getElementById('subtitle-text').textContent           = t.subtitle;
+      document.getElementById('label-input').textContent             = t.labelInput;
+      document.getElementById('label-reqs').textContent              = t.labelReqs;
+      document.getElementById('label-entropy').textContent           = t.labelEntropy;
+      document.getElementById('footer-text').textContent             = t.footerText;
+      inputEl.placeholder                                            = t.placeholder;
+      langBtn.textContent                                            = t.langBtn;
+      blacklistText.textContent                                      = t.blacklist;
+      generateLabel.textContent                                      = t.generateBtn;
 
-      // Actualizar textos del checklist usando atributos data-es / data-en
       document.querySelectorAll('.check-item span[data-es]').forEach(el => {
         el.textContent = el.getAttribute(`data-${lang}`);
       });
 
-      // Volver a analizar para actualizar etiquetas de nivel y tiempo
       analizarPassword();
     }
 
     /* ============================================================
-       FUNCIÓN: calcularEntropia
+       CALCULAR ENTROPÍA
     ============================================================ */
     function calcularEntropia(pwd) {
       if (!pwd) return 0;
@@ -533,74 +645,59 @@
       if (/[A-Z]/.test(pwd)) pool += 26;
       if (/[0-9]/.test(pwd)) pool += 10;
       if (/[^a-zA-Z0-9]/.test(pwd)) pool += 32;
-      if (pool === 0) return 0;
-      return Math.floor(Math.log2(pool) * pwd.length);
+      return pool === 0 ? 0 : Math.floor(Math.log2(pool) * pwd.length);
     }
 
     /* ============================================================
-       FUNCIÓN: estimarTiempoCrackeo
+       ESTIMAR TIEMPO DE CRACKEO
     ============================================================ */
-    function estimarTiempoCrackeo(bits) {
+    function estimarTiempo(bits) {
       if (bits === 0) return '';
       const t = I18N[lang].times;
       const seg = (Math.pow(2, bits) / 2) / 1e10;
-      const MIN = 60, HORA = 3600, DIA = 86400;
-      const ANIO = DIA*365, SIGLO = ANIO*100;
-      if (seg < 1)          return t.instant;
-      if (seg < MIN)        return t.seconds(Math.ceil(seg));
-      if (seg < HORA)       return t.minutes(Math.ceil(seg/MIN));
-      if (seg < DIA)        return t.hours(Math.ceil(seg/HORA));
-      if (seg < ANIO)       return t.days(Math.ceil(seg/DIA));
-      if (seg < SIGLO)      return t.years(Math.ceil(seg/ANIO));
-      if (seg < SIGLO*100)  return t.centuries(Math.ceil(seg/SIGLO));
+      const MIN=60, H=3600, D=86400, Y=D*365, C=Y*100;
+      if (seg < 1)    return t.instant;
+      if (seg < MIN)  return t.seconds(Math.ceil(seg));
+      if (seg < H)    return t.minutes(Math.ceil(seg/MIN));
+      if (seg < D)    return t.hours(Math.ceil(seg/H));
+      if (seg < Y)    return t.days(Math.ceil(seg/D));
+      if (seg < C)    return t.years(Math.ceil(seg/Y));
+      if (seg < C*100)return t.centuries(Math.ceil(seg/C));
       return t.forever;
     }
 
     /* ============================================================
-       FUNCIÓN: actualizarChecklist
+       ACTUALIZAR CHECKLIST
     ============================================================ */
     function actualizarChecklist(pwd) {
       const checks = {
-        length:   pwd.length >= 8,
-        upper:    /[A-Z]/.test(pwd),
-        lower:    /[a-z]/.test(pwd),
-        number:   /[0-9]/.test(pwd),
-        symbol:   /[^a-zA-Z0-9]/.test(pwd),
-        length12: pwd.length >= 12,
+        length: pwd.length >= 8, upper: /[A-Z]/.test(pwd),
+        lower: /[a-z]/.test(pwd), number: /[0-9]/.test(pwd),
+        symbol: /[^a-zA-Z0-9]/.test(pwd), length12: pwd.length >= 12,
       };
-      let cumplidos = 0;
-      for (const [clave, ok] of Object.entries(checks)) {
-        const el = REQS[clave];
-        const iconEl = el.querySelector('.check-icon');
-        if (ok) {
-          el.classList.add('ok');
-          iconEl.textContent = '✓';
-          cumplidos++;
-        } else {
-          el.classList.remove('ok');
-          iconEl.textContent = '✗';
-        }
+      for (const [k, ok] of Object.entries(checks)) {
+        const el = REQS[k];
+        el.classList.toggle('ok', ok);
+        el.querySelector('.check-icon').textContent = ok ? '✓' : '✗';
       }
-      return cumplidos;
     }
 
     /* ============================================================
-       FUNCIÓN: calcularNivel
+       CALCULAR NIVEL
     ============================================================ */
-    function calcularNivel(entropia, pwd) {
-      const levels = I18N[lang].levels;
-      if (BLACKLIST.includes(pwd.toLowerCase()))
-        return { nivel: 1, etiqueta: I18N[lang].levelBlacklist, color: 'var(--weak)' };
-      if (entropia === 0) return { nivel: 0, etiqueta: levels[0], color: 'var(--text-dim)' };
-      if (entropia < 28)  return { nivel: 1, etiqueta: levels[1], color: 'var(--weak)' };
-      if (entropia < 40)  return { nivel: 2, etiqueta: levels[2], color: 'var(--fair)' };
-      if (entropia < 60)  return { nivel: 3, etiqueta: levels[3], color: 'var(--good)' };
-      if (entropia < 80)  return { nivel: 4, etiqueta: levels[4], color: 'var(--strong)' };
-      return               { nivel: 5, etiqueta: levels[5], color: 'var(--max)' };
+    function calcularNivel(bits, pwd) {
+      const t = I18N[lang];
+      if (BLACKLIST.includes(pwd.toLowerCase())) return { nivel:1, etiqueta: t.levelBL, color:'var(--weak)' };
+      if (bits === 0) return { nivel:0, etiqueta: t.levels[0], color:'var(--text-dim)' };
+      if (bits < 28)  return { nivel:1, etiqueta: t.levels[1], color:'var(--weak)' };
+      if (bits < 40)  return { nivel:2, etiqueta: t.levels[2], color:'var(--fair)' };
+      if (bits < 60)  return { nivel:3, etiqueta: t.levels[3], color:'var(--good)' };
+      if (bits < 80)  return { nivel:4, etiqueta: t.levels[4], color:'var(--strong)' };
+      return           { nivel:5, etiqueta: t.levels[5], color:'var(--max)' };
     }
 
     /* ============================================================
-       FUNCIÓN: actualizarBarra
+       ACTUALIZAR BARRA
     ============================================================ */
     function actualizarBarra(nivel) {
       segments.forEach((seg, i) => {
@@ -610,54 +707,67 @@
     }
 
     /* ============================================================
-       FUNCIÓN PRINCIPAL: analizarPassword
+       FUNCIÓN PRINCIPAL
     ============================================================ */
     function analizarPassword() {
-      const pwd = inputEl.value;
-      const t   = I18N[lang];
+      const pwd  = inputEl.value;
+      const t    = I18N[lang];
       const bits = calcularEntropia(pwd);
       actualizarChecklist(pwd);
       const { nivel, etiqueta, color } = calcularNivel(bits, pwd);
-      const tiempo = estimarTiempoCrackeo(bits);
 
       strengthLabel.textContent = pwd.length === 0 ? t.noAnalysis : etiqueta;
       strengthLabel.style.color = color;
-      crackTimeEl.textContent   = tiempo ? `${t.crackPrefix}${tiempo}` : '';
+      crackTimeEl.textContent   = bits ? `${t.crackPrefix}${estimarTiempo(bits)}` : '';
       actualizarBarra(pwd.length === 0 ? 0 : nivel);
 
-      const esComun = pwd.length > 0 && BLACKLIST.includes(pwd.toLowerCase());
-      blacklistWarn.style.display = esComun ? 'flex' : 'none';
+      blacklistWarn.style.display = (pwd.length > 0 && BLACKLIST.includes(pwd.toLowerCase())) ? 'flex' : 'none';
 
-      entropyEl.textContent = `${bits} bits`;
-      entropyEl.style.color = nivel >= 4 ? 'var(--max)' : nivel === 3 ? 'var(--good)' : nivel === 2 ? 'var(--fair)' : nivel >= 1 ? 'var(--weak)' : 'var(--accent)';
+      entropyEl.textContent  = `${bits} bits`;
+      entropyEl.style.color  = nivel>=4?'var(--max)':nivel===3?'var(--good)':nivel===2?'var(--fair)':nivel>=1?'var(--weak)':'var(--accent)';
+
+      // Llamar a HIBP con debounce (espera 800ms después de que el usuario
+      // pare de escribir para no saturar la API con cada tecla)
+      clearTimeout(hibpTimer);
+      if (pwd.length === 0) {
+        hibpWarn.style.display = 'none';
+        return;
+      }
+      hibpTimer = setTimeout(() => comprobarHIBP(pwd), 800);
     }
 
     /* ============================================================
-       EVENTO: cambio de idioma
-       Al pulsar el botón, alterna entre 'es' y 'en' y aplica el idioma.
+       EVENTOS
     ============================================================ */
+
+    // Cambiar idioma
     langBtn.addEventListener('click', () => {
       lang = lang === 'es' ? 'en' : 'es';
       aplicarIdioma();
     });
 
-    /* ============================================================
-       EVENTO: mostrar / ocultar contraseña
-    ============================================================ */
+    // Mostrar/ocultar contraseña
     toggleBtn.addEventListener('click', () => {
-      const esOculta = inputEl.type === 'password';
-      inputEl.type = esOculta ? 'text' : 'password';
-      toggleBtn.textContent = esOculta ? '🙈' : '👁️';
+      const oculta = inputEl.type === 'password';
+      inputEl.type = oculta ? 'text' : 'password';
+      toggleBtn.textContent = oculta ? '🙈' : '👁️';
     });
 
-    /* ============================================================
-       EVENTO: análisis en tiempo real
-    ============================================================ */
+    // Generar contraseña
+    generateBtn.addEventListener('click', () => {
+      inputEl.value = generarPassword();
+      // Si estaba oculta, mostrarla para que el usuario vea lo que se generó
+      inputEl.type = 'text';
+      toggleBtn.textContent = '🙈';
+      analizarPassword();
+      inputEl.focus();
+    });
+
+    // Análisis en tiempo real
     inputEl.addEventListener('input', analizarPassword);
 
-    /* Inicializar con el idioma por defecto */
+    // Inicializar
     aplicarIdioma();
-
   </script>
 
 </body>
