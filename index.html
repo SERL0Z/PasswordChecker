@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PassGuard – Comprobador de Seguridad</title>
+
+  <!-- ============================================================
+       TIPOGRAFÍA: Google Fonts
+       - "Share Tech Mono" → fuente monoespaciada, estética terminal
+       - "Exo 2"           → fuente moderna y técnica para títulos
+  ============================================================ -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;600;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ============================================================
+       VARIABLES CSS GLOBALES
+       Centraliza todos los colores y tamaños para poder cambiarlos
+       desde un único lugar (buena práctica de mantenimiento).
+    ============================================================ */
+    :root {
+      --bg:          #070b12;
+      --surface:     #0d1421;
+      --border:      #1a2640;
+      --text:        #c8d8f0;
+      --text-dim:    #4a6080;
+      --accent:      #00e5ff;
+      --accent-glow: rgba(0, 229, 255, 0.18);
+
+      --weak:        #ff3860;
+      --fair:        #ffb830;
+      --good:        #00e5a0;
+      --strong:      #00e5ff;
+      --max:         #7b5fff;
+
+      --radius:      10px;
+      --font-mono:   'Share Tech Mono', monospace;
+      --font-ui:     'Exo 2', sans-serif;
+    }
+
+    /* ============================================================
+       RESET Y BASE
+       Elimina márgenes/rellenos predeterminados del navegador y
+       establece box-sizing: border-box (padding incluido en ancho).
+    ============================================================ */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-ui);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px 48px;
+      /* Fondo con patrón de cuadrícula sutil (efecto "cyberpunk") */
+      background-image:
+        linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+    }
+
+    /* ============================================================
+       CABECERA
+    ============================================================ */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .logo-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: var(--accent);
+      background: var(--accent-glow);
+      border: 1px solid var(--accent);
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -1px;
+      /* Texto con gradiente (técnica CSS: clip + transparent) */
+      background: linear-gradient(135deg, #fff 30%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      font-size: 14px;
+      color: var(--text-dim);
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    /* ============================================================
+       TARJETA PRINCIPAL
+       Efecto "glassmorphism" suave con borde brillante.
+    ============================================================ */
+    .card {
+      width: 100%;
+      max-width: 560px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 36px 32px;
+      box-shadow:
+        0 0 0 1px rgba(0,229,255,0.05),
+        0 24px 60px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Línea de brillo superior decorativa */
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.6;
+    }
+
+    /* ============================================================
+       CAMPO DE CONTRASEÑA
+    ============================================================ */
+    .field-label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      font-family: var(--font-mono);
+    }
+
+    .input-wrapper {
+      position: relative;
+      margin-bottom: 24px;
+    }
+
+    #password-input {
+      width: 100%;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 52px 14px 18px;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      letter-spacing: 2px;
+    }
+
+    /* Cambia el borde al hacer foco (accesibilidad + estética) */
+    #password-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    /* Botón de ojo para mostrar/ocultar contraseña */
+    #toggle-visibility {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-dim);
+      transition: color 0.2s;
+      padding: 4px;
+      font-size: 18px;
+      line-height: 1;
+    }
+
+    #toggle-visibility:hover { color: var(--accent); }
+
+    /* ============================================================
+       SECCIÓN DE NIVEL DE FORTALEZA
+    ============================================================ */
+    .strength-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    #strength-label {
+      font-size: 13px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      letter-spacing: 1px;
+      transition: color 0.4s;
+      color: var(--text-dim);
+    }
+
+    #crack-time {
+      font-size: 11px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+
+    /* ============================================================
+       BARRA DE PROGRESO
+       Usa 5 segmentos en lugar de una barra continua para un look
+       más moderno y técnico.
+    ============================================================ */
+    .progress-bar {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 28px;
+    }
+
+    .bar-segment {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: rgba(255,255,255,0.06);
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
+
+    /* Clases aplicadas dinámicamente desde JS */
+    .bar-segment.active-1 { background: var(--weak);   box-shadow: 0 0 8px var(--weak); }
+    .bar-segment.active-2 { background: var(--fair);   box-shadow: 0 0 8px var(--fair); }
+    .bar-segment.active-3 { background: var(--good);   box-shadow: 0 0 8px var(--good); }
+    .bar-segment.active-4 { background: var(--strong); box-shadow: 0 0 8px var(--strong); }
+    .bar-segment.active-5 { background: var(--max);    box-shadow: 0 0 8px var(--max); }
+
+    /* ============================================================
+       AVISO DE CONTRASEÑA COMÚN (lista negra)
+    ============================================================ */
+    #blacklist-warning {
+      display: none; /* oculto por defecto; JS lo muestra si procede */
+      align-items: center;
+      gap: 10px;
+      background: rgba(255,56,96,0.1);
+      border: 1px solid rgba(255,56,96,0.4);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      color: var(--weak);
+      font-family: var(--font-mono);
+    }
+
+    #blacklist-warning span.icon { font-size: 18px; }
+
+    /* ============================================================
+       CHECKLIST DE REQUISITOS
+    ============================================================ */
+    .section-title {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 14px;
+      font-family: var(--font-mono);
+    }
+
+    .checklist {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      color: var(--text-dim);
+      transition: color 0.3s;
+    }
+
+    /* Círculo de estado (✓ o ✗) */
+    .check-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--text-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+
+    /* Cuando el requisito se cumple, JS añade la clase "ok" */
+    .check-item.ok .check-icon {
+      border-color: var(--good);
+      background: rgba(0,229,160,0.15);
+      color: var(--good);
+    }
+
+    .check-item.ok {
+      color: #c8d8f0;
+    }
+
+    /* ============================================================
+       MEDIDOR DE ENTROPÍA
+    ============================================================ -->
+    Entropía = medida matemática de aleatoriedad/impredecibilidad
+    (bits). Cuanto mayor, más difícil de adivinar.
+    ============================================================ */
+    .entropy-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 18px;
+    }
+
+    .entropy-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+    }
+
+    #entropy-value {
+      font-size: 20px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      color: var(--accent);
+      transition: color 0.3s;
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    footer {
+      margin-top: 32px;
+      font-size: 11px;
+      color: var(--text-dim);
+      text-align: center;
+      letter-spacing: 1px;
+      font-family: var(--font-mono);
+    }
+
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ============================================================
+       DISEÑO RESPONSIVE
+       En pantallas muy pequeñas el checklist pasa a 1 columna.
+    ============================================================ */
+    @media (max-width: 420px) {
+      .card { padding: 28px 20px; }
+      .checklist { grid-template-columns: 1fr; }
+    }
+
+    /* ============================================================
+       ANIMACIÓN DE ENTRADA
+       La tarjeta aparece con fadeIn al cargar la página.
+    ============================================================ */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    header { animation: fadeUp 0.5s ease both; }
+    .card  { animation: fadeUp 0.5s 0.1s ease both; }
+    footer { animation: fadeUp 0.5s 0.2s ease both; }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+       CABECERA
+  ============================================================ -->
+  <header>
+    <div class="logo-badge">🔐 PassGuard v1.0</div>
+    <h1>Password Analyzer</h1>
+    <p class="subtitle">Comprobador de seguridad en tiempo real</p>
+  </header>
+
+  <!-- ============================================================
+       TARJETA PRINCIPAL
+  ============================================================ -->
+  <div class="card">
+
+    <!-- INPUT de contraseña -->
+    <p class="field-label">// introduce tu contraseña</p>
+    <div class="input-wrapper">
+      <input
+        type="password"
+        id="password-input"
+        placeholder="escribe aquí..."
+        autocomplete="new-password"
+        spellcheck="false"
+      />
+      <!-- Botón ojo: alterna entre mostrar y ocultar -->
+      <button id="toggle-visibility" aria-label="Mostrar/ocultar contraseña">
+        👁️
+      </button>
+    </div>
+
+    <!-- Nivel y tiempo de crackeo -->
+    <div class="strength-header">
+      <span id="strength-label">— sin analizar —</span>
+      <span id="crack-time"></span>
+    </div>
+
+    <!-- Barra segmentada de fortaleza (5 segmentos) -->
+    <div class="progress-bar" id="progress-bar">
+      <div class="bar-segment" data-index="1"></div>
+      <div class="bar-segment" data-index="2"></div>
+      <div class="bar-segment" data-index="3"></div>
+      <div class="bar-segment" data-index="4"></div>
+      <div class="bar-segment" data-index="5"></div>
+    </div>
+
+    <!-- Aviso lista negra -->
+    <div id="blacklist-warning">
+      <span class="icon">⚠️</span>
+      <span>Contraseña muy común. Es la primera que probaría un atacante.</span>
+    </div>
+
+    <!-- Checklist de requisitos -->
+    <p class="section-title">// requisitos de seguridad</p>
+    <div class="checklist">
+      <div class="check-item" id="req-length">
+        <div class="check-icon">✗</div>
+        <span>8+ caracteres</span>
+      </div>
+      <div class="check-item" id="req-upper">
+        <div class="check-icon">✗</div>
+        <span>Mayúscula</span>
+      </div>
+      <div class="check-item" id="req-lower">
+        <div class="check-icon">✗</div>
+        <span>Minúscula</span>
+      </div>
+      <div class="check-item" id="req-number">
+        <div class="check-icon">✗</div>
+        <span>Número</span>
+      </div>
+      <div class="check-item" id="req-symbol">
+        <div class="check-icon">✗</div>
+        <span>Símbolo (!@#…)</span>
+      </div>
+      <div class="check-item" id="req-length12">
+        <div class="check-icon">✗</div>
+        <span>12+ caracteres</span>
+      </div>
+    </div>
+
+    <!-- Entropía -->
+    <div class="entropy-row">
+      <span class="entropy-label">Entropía estimada</span>
+      <span id="entropy-value">0 bits</span>
+    </div>
+
+  </div>
+
+  <!-- ============================================================
+       PIE DE PÁGINA
+  ============================================================ -->
+  <footer>
+    &copy; 2025 PassGuard &mdash; tu contraseña nunca sale de este navegador
+  </footer>
+
+
+  <!-- ============================================================
+       JAVASCRIPT — TODA LA LÓGICA DE LA APLICACIÓN
+  ============================================================ -->
+  <script>
+    /* =============================================================
+       1. LISTA NEGRA DE CONTRASEÑAS COMUNES
+       Array con las contraseñas más utilizadas según filtraciones
+       de datos reales (HaveIBeenPwned, etc.).
+       Usamos .toLowerCase() al comparar para ignorar mayúsculas.
+    ============================================================= */
+    const BLACKLIST = [
+      "123456","password","123456789","12345678","12345",
+      "1234567","1234567890","qwerty","abc123","111111",
+      "123123","admin","letmein","welcome","monkey",
+      "dragon","master","sunshine","princess","superman",
+      "trustno1","iloveyou","passw0rd","password1","qwerty123",
+      "contraseña","1234","00000000","11111111","password123"
+    ];
+
+    /* =============================================================
+       2. REFERENCIAS AL DOM
+       document.getElementById devuelve el elemento HTML con ese id.
+       Guardamos las referencias en variables para no repetir la
+       búsqueda cada vez que necesitemos el elemento.
+    ============================================================= */
+    const inputEl        = document.getElementById('password-input');
+    const toggleBtn      = document.getElementById('toggle-visibility');
+    const strengthLabel  = document.getElementById('strength-label');
+    const crackTimeEl    = document.getElementById('crack-time');
+    const segments       = document.querySelectorAll('.bar-segment');
+    const blacklistWarn  = document.getElementById('blacklist-warning');
+    const entropyEl      = document.getElementById('entropy-value');
+
+    /* IDs de los requisitos del checklist */
+    const REQS = {
+      length:   document.getElementById('req-length'),
+      upper:    document.getElementById('req-upper'),
+      lower:    document.getElementById('req-lower'),
+      number:   document.getElementById('req-number'),
+      symbol:   document.getElementById('req-symbol'),
+      length12: document.getElementById('req-length12'),
+    };
+
+    /* =============================================================
+       3. FUNCIÓN: calcularEntropia
+       La entropía mide la impredecibilidad de la contraseña en bits.
+       Fórmula: E = log2(pool) × longitud
+       "pool" es el número de caracteres posibles según qué tipos usa.
+    ============================================================= */
+    function calcularEntropia(pwd) {
+      if (!pwd) return 0;
+      let pool = 0;
+      if (/[a-z]/.test(pwd)) pool += 26;  // 26 letras minúsculas
+      if (/[A-Z]/.test(pwd)) pool += 26;  // 26 letras mayúsculas
+      if (/[0-9]/.test(pwd)) pool += 10;  // 10 dígitos
+      if (/[^a-zA-Z0-9]/.test(pwd)) pool += 32; // símbolos aprox.
+      if (pool === 0) return 0;
+      return Math.floor(Math.log2(pool) * pwd.length);
+    }
+
+    /* =============================================================
+       4. FUNCIÓN: estimarTiempoCrackeo
+       Dado un número de bits de entropía, calcula cuántas
+       combinaciones hay (2^bits) y cuánto tardaría en crackearlas
+       con un ataque de fuerza bruta a 10.000 millones de intentos/s
+       (velocidad de un ordenador moderno con GPU).
+    ============================================================= */
+    function estimarTiempoCrackeo(bits) {
+      if (bits === 0) return '';
+      const intentosPorSegundo = 1e10; // 10^10 (10 mil millones/s)
+      const combinaciones = Math.pow(2, bits);
+      // En promedio, se encuentra la mitad antes
+      const segundos = (combinaciones / 2) / intentosPorSegundo;
+
+      const MINUTO = 60;
+      const HORA   = 3600;
+      const DIA    = 86400;
+      const ANIO   = DIA * 365;
+      const SIGLO  = ANIO * 100;
+
+      if (segundos < 1)          return '< 1 segundo';
+      if (segundos < MINUTO)     return `${Math.ceil(segundos)} segundos`;
+      if (segundos < HORA)       return `${Math.ceil(segundos/MINUTO)} minutos`;
+      if (segundos < DIA)        return `${Math.ceil(segundos/HORA)} horas`;
+      if (segundos < ANIO)       return `${Math.ceil(segundos/DIA)} días`;
+      if (segundos < SIGLO)      return `${Math.ceil(segundos/ANIO)} años`;
+      if (segundos < SIGLO*100)  return `${Math.ceil(segundos/SIGLO)} siglos`;
+      return 'millones de años ♾️';
+    }
+
+    /* =============================================================
+       5. FUNCIÓN: actualizarChecklist
+       Evalúa cada requisito con Expresiones Regulares (RegExp) y
+       marca visualmente los que se cumplen.
+       Devuelve el número de requisitos cumplidos (0-6).
+    ============================================================= */
+    function actualizarChecklist(pwd) {
+      const checks = {
+        length:   pwd.length >= 8,
+        upper:    /[A-Z]/.test(pwd),
+        lower:    /[a-z]/.test(pwd),
+        number:   /[0-9]/.test(pwd),
+        symbol:   /[^a-zA-Z0-9]/.test(pwd),
+        length12: pwd.length >= 12,
+      };
+
+      let cumplidos = 0;
+      for (const [clave, ok] of Object.entries(checks)) {
+        const el = REQS[clave];
+        const iconEl = el.querySelector('.check-icon');
+        if (ok) {
+          el.classList.add('ok');
+          iconEl.textContent = '✓';
+          cumplidos++;
+        } else {
+          el.classList.remove('ok');
+          iconEl.textContent = '✗';
+        }
+      }
+      return cumplidos;
+    }
+
+    /* =============================================================
+       6. FUNCIÓN: calcularNivel
+       Combina la entropía y los requisitos cumplidos para dar
+       un nivel de 0 a 5.
+       Devuelve un objeto con: nivel (número), etiqueta, color.
+    ============================================================= */
+    function calcularNivel(entropia, cumplidos, pwd) {
+      // Si está en lista negra, máximo nivel 1 (Muy débil)
+      if (BLACKLIST.includes(pwd.toLowerCase())) {
+        return { nivel: 1, etiqueta: '💀 Muy débil (contraseña conocida)', color: 'var(--weak)' };
+      }
+      if (entropia === 0) return { nivel: 0, etiqueta: '— sin analizar —', color: 'var(--text-dim)' };
+      if (entropia < 28)  return { nivel: 1, etiqueta: '💀 Muy débil',  color: 'var(--weak)' };
+      if (entropia < 40)  return { nivel: 2, etiqueta: '⚠️  Débil',     color: 'var(--fair)' };
+      if (entropia < 60)  return { nivel: 3, etiqueta: '🟡 Media',      color: 'var(--good)' };
+      if (entropia < 80)  return { nivel: 4, etiqueta: '✅ Fuerte',     color: 'var(--strong)' };
+      return               { nivel: 5, etiqueta: '🔒 Muy fuerte',       color: 'var(--max)' };
+    }
+
+    /* =============================================================
+       7. FUNCIÓN: actualizarBarra
+       Pinta los segmentos de la barra según el nivel calculado.
+       Cada segmento recibe la clase "active-N" donde N es el nivel.
+    ============================================================= */
+    function actualizarBarra(nivel) {
+      segments.forEach((seg, i) => {
+        // Eliminar clases activas previas
+        seg.className = 'bar-segment';
+        if (i < nivel) {
+          // i va de 0 a 4; nivel de 0 a 5
+          seg.classList.add(`active-${nivel}`);
+        }
+      });
+    }
+
+    /* =============================================================
+       8. FUNCIÓN PRINCIPAL: analizarPassword
+       Orquesta todas las funciones anteriores cada vez que el
+       usuario escribe un carácter (evento 'input').
+    ============================================================= */
+    function analizarPassword() {
+      const pwd = inputEl.value;
+
+      /* 8a. Calcular métricas */
+      const bits     = calcularEntropia(pwd);
+      const cumplidos = actualizarChecklist(pwd);
+      const { nivel, etiqueta, color } = calcularNivel(bits, cumplidos, pwd);
+      const tiempo   = estimarTiempoCrackeo(bits);
+
+      /* 8b. Actualizar indicador de nivel */
+      strengthLabel.textContent = pwd.length === 0 ? '— sin analizar —' : etiqueta;
+      strengthLabel.style.color = color;
+
+      /* 8c. Actualizar tiempo de crackeo */
+      crackTimeEl.textContent = tiempo ? `⚡ Crackear: ${tiempo}` : '';
+
+      /* 8d. Actualizar barra de progreso */
+      actualizarBarra(pwd.length === 0 ? 0 : nivel);
+
+      /* 8e. Mostrar/ocultar aviso de lista negra */
+      const esComun = pwd.length > 0 && BLACKLIST.includes(pwd.toLowerCase());
+      blacklistWarn.style.display = esComun ? 'flex' : 'none';
+
+      /* 8f. Actualizar entropía */
+      entropyEl.textContent = `${bits} bits`;
+      entropyEl.style.color = nivel >= 4 ? 'var(--max)' : nivel === 3 ? 'var(--good)' : nivel === 2 ? 'var(--fair)' : nivel >= 1 ? 'var(--weak)' : 'var(--accent)';
+    }
+
+    /* =============================================================
+       9. EVENTO: mostrar / ocultar contraseña
+       Al pulsar el botón del ojo, cambia el type del input entre
+       "password" (oculta con •••) y "text" (visible).
+    ============================================================= */
+    toggleBtn.addEventListener('click', () => {
+      const esOculta = inputEl.type === 'password';
+      inputEl.type = esOculta ? 'text' : 'password';
+      toggleBtn.textContent = esOculta ? '🙈' : '👁️';
+    });
+
+    /* =============================================================
+       10. EVENTO: escucha cada pulsación de tecla en tiempo real
+       'input' se dispara con cada cambio (tecla, pegar texto, etc.)
+    ============================================================= */
+    inputEl.addEventListener('input', analizarPassword);
+
+  </script>
+
+</body>
+</html>
